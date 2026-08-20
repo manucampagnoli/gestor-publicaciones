@@ -1,6 +1,7 @@
 import Publicacion from "./Publicacion.js";
 import Usuario from "./Usuario.js";
 
+
 const usuario1 = new Usuario("Juan Pérez", "juan.perez@gmail.com");
 const publicacion1 = new Publicacion("Busco apuntes algebra", "Busco apuntes de algebra analitica para mi clase", usuario1);
 
@@ -57,4 +58,40 @@ publicaciones.filter(publicacion => publicacion.esDeAutor(usuario2.nombre)).forE
     console.log(`Autor: ${publicacion.autor.nombre}`);
     console.log();
 });
+
+
+
+const usuario7 = new Usuario("Sofía Ramírez", "sofia.ramirez@gmail.com");
+const usuario8 = new Usuario("Diego Torres", "diego.torres@gmail.com");
+const usuario9 = new Usuario("Valentina Morales", "valentina.morales@gmail.com");
+
+const publicacion7 = new Publicacion("Busco ayuda con física", "Necesito ayuda con los ejercicios de física 2", usuario7);
+const publicacion8 = new Publicacion("Vendo libros de programación", "Tengo libros de programación que ya no necesito sobre JavaScript y Python", usuario8);
+const publicacion9 = new Publicacion("Ofrezco clases particulares de matemáticas", "Ofrezco clases particulares de matemáticas para estudiantes de secundaria y preparatoria", usuario9);
+const publicacion10 = new Publicacion("Busco apuntes de química", "Estoy buscando apuntes de química orgánica para mi clase", usuario7);
+const publicacion11 = new Publicacion("Vendo libros de historia", "Tengo libros de historia que ya no necesito sobre la Segunda Guerra Mundial", usuario8);
+publicaciones.push(publicacion7, publicacion8, publicacion9, publicacion10, publicacion11);
+
+publicaciones.forEach(publicacion => {
+    console.log("--------------------");
+    console.log(publicacion.mostrarResumen());
+});
+
+publicacionesActivas = publicaciones.filter(publicacion => publicacion.estaActiva());
+publicacionesActivas.forEach((publicacion) => {
+    console.log(`${publicacion.titulo}`);
+});
+console.log();
+
+
+const nombreUsuarioBuscado = usuario7.nombre;
+const publicacionEncontrada = publicaciones.find(publicacion => publicacion.esDeAutor(nombreUsuarioBuscado));
+
+if (publicacionEncontrada) {
+    console.log(`Se encontró una publicación de ${nombreUsuarioBuscado}:`);
+    console.log(publicacionEncontrada.mostrarResumen());
+} else {
+    console.log(`No se encontró ninguna publicación de ${nombreUsuarioBuscado}.`);
+}
+
 
