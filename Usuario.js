@@ -12,6 +12,5 @@ export default class Usuario {
     mostrarPerfil() {
         return `Nombre: ${this.nombre}\nEmail: ${this.email}`;
     }
-
     
 }

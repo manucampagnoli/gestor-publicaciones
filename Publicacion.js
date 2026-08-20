@@ -14,7 +14,7 @@ export default class Publicacion {
     }
 
     mostrarResumen() {
-        return `${this.titulo} - ${this.autor}`;
+        return `${this.titulo} - ${this.autor.nombre}`;
     }
 
     estaActiva() {
@@ -22,6 +22,6 @@ export default class Publicacion {
     }
 
     esDeAutor(nombre) {
-        return this.autor === nombre;
+        return this.autor.nombre === nombre;
     }
 }
