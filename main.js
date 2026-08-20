@@ -1,6 +1,6 @@
 import Publicacion from "./Publicacion.js";
 import Usuario from "./Usuario.js";
-
+import RepositorioPublicaciones from "./RepositorioPublicaciones.js";
 
 const usuario1 = new Usuario("Juan Pérez", "juan.perez@gmail.com");
 const publicacion1 = new Publicacion("Busco apuntes algebra", "Busco apuntes de algebra analitica para mi clase", usuario1);
@@ -94,4 +94,17 @@ if (publicacionEncontrada) {
     console.log(`No se encontró ninguna publicación de ${nombreUsuarioBuscado}.`);
 }
 
+const repositorioPublicaciones = new RepositorioPublicaciones();
+publicaciones.forEach(publicacion => {
+    repositorioPublicaciones.agregar(publicacion);
+});
 
+
+
+publicaciones.forEach(publicacion => {
+    const nombreUsuario = publicacion.autor.nombre;
+    const resultados = repositorioPublicaciones.buscarPorUsuario(nombreUsuario);
+
+    console.log(`Publicaciones de ${nombreUsuario}:`);
+    console.log(resultados);
+});
