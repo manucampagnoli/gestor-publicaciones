@@ -20,4 +20,8 @@ export default class RepositorioPublicaciones {
     cantidadTotal() {
         return this.publicaciones.length;
     }
+
+    listaPorTipo(claseConstructor) {
+        return this.publicaciones.filter(publicacion => publicacion instanceof claseConstructor);
+    }
 }
