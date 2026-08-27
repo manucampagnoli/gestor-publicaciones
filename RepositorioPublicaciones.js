@@ -13,6 +13,7 @@ export default class RepositorioPublicaciones extends EventEmitter{
             throw new Error('La publicación no cumple las reglas de validación');
         }
         this.publicaciones.push(publicacion);
+        this.emit("publicacionAgregada", publicacion);
     }
 
     buscarPorUsuario(nombre) {
