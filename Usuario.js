@@ -2,6 +2,7 @@ export default class Usuario {
     nombre;
     email;
     fechaRegistro;
+    contactos = [];
 
     constructor(nombre, email) {
         this.nombre = nombre;
@@ -11,6 +12,12 @@ export default class Usuario {
 
     mostrarPerfil() {
         return `Nombre: ${this.nombre}\nEmail: ${this.email}`;
+    }
+
+    agregarContacto(usuario) {
+        if (!this.contactos.includes(usuario)) {
+            this.contactos.push(usuario);
+        }
     }
     
 }
