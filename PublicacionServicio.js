@@ -1,3 +1,5 @@
+import Publicacion from "./Publicacion.js";
+
 export default class PublicacionServicio extends Publicacion {
     modalidad;
     duracion;

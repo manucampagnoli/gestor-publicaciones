@@ -1,7 +1,10 @@
-export default class RepositorioPublicaciones {
+import { EventEmitter } from "node:events";
+
+export default class RepositorioPublicaciones extends EventEmitter{
     publicaciones;
     
     constructor() {
+        super();
         this.publicaciones = [];
     }
 

@@ -1,110 +1,59 @@
 import Publicacion from "./Publicacion.js";
+import PublicacionServicio from "./PublicacionServicio.js";
+import PublicacionVenta from "./PublicacionVenta.js";
 import Usuario from "./Usuario.js";
 import RepositorioPublicaciones from "./RepositorioPublicaciones.js";
 
 const usuario1 = new Usuario("Juan Pérez", "juan.perez@gmail.com");
-const publicacion1 = new Publicacion("Busco apuntes algebra", "Busco apuntes de algebra analitica para mi clase", usuario1);
-
 const usuario2 = new Usuario("María López", "maria.lopez@gmail.com");
-const publicacion2 = new Publicacion("Necesito ayuda con programación", "Estoy teniendo problemas con un ejercicio de programación de poo", usuario2);
-
 const usuario3 = new Usuario("Carlos García", "carlos.garcia@gmail.com");
-const publicacion3 = new Publicacion("Busco ayuda con matemáticas", "Necesito ayuda con los ejercicios de matemáticas 1", usuario3);
-publicacion3.activa = false;
-
 const usuario4 = new Usuario("Ana Torres", "ana.torres@gmail.com");
-const publicacion4 = new Publicacion("Vendo libros de texto", "Tengo libros de texto que ya no necesito sobre patrones de diseño", usuario4);
 
-const publicaciones = [publicacion1, publicacion2, publicacion3, publicacion4];
+const publicaciones = [
+    new Publicacion(
+        "Busco apuntes de álgebra",
+        "Apuntes para la clase de álgebra analítica",
+        usuario1
+    ),
+    new PublicacionServicio(
+        "Clases particulares de programación",
+        "Ayuda con ejercicios de POO",
+        usuario2,
+        "Virtual",
+        "2 horas",
+        usuario3
+    ),
+    new PublicacionVenta(
+        "Vendo libros de patrones de diseño",
+        "Libros de texto en buen estado",
+        usuario4,
+        25000
+    )
+];
 
-publicaciones.forEach(publicacion => {
-    console.log("--------------------");
-    console.log(publicacion.mostrarResumen());
-    console.log(`Activa: ${publicacion.estaActiva()}`);
-    console.log(`Autor: ${publicacion.autor.nombre}`);
-});
-
-const usuario5 = new Usuario("Luis Fernández", "luis.fernandez@gmail.com");
-const publicacion5 = new Publicacion("Ofrezco clases particulares", "Ofrezco clases particulares de matemáticas y física para estudiantes de secundaria", usuario5);
-publicacion5.activa = false;
-
-publicaciones.push(publicacion5);
-
-
-let publicacionesActivas = publicaciones.filter(publicacion => publicacion.estaActiva());
-let cantidadPublicacionesActivas = publicacionesActivas.length;
-console.log("--------------------");
-console.log();
-console.log(`Cantidad de publicaciones activas: ${cantidadPublicacionesActivas}`);
-console.log();
-console.log("--------------------");
-console.log("Publicaciones activas:");
-
-publicacionesActivas.forEach((publicacion) => {
-    console.log(`${publicacion.titulo}`);
-});
-console.log();
-console.log("--------------------");
-
-const publicacionesJSON = JSON.stringify(publicaciones, null, 2);
-console.log(publicacionesJSON); // El método JSON.stringify() no incluye métodos de un objeto en la representación JSON, solamente se incluyen las propiedades del objeto. Por eso, console.log(publicacionesJSON) solo muestra los atributos de las publicaciones, como titulo, descripcion, autor, fechaPublicacion y activa.
-
-const publicacion6 = new Publicacion("Busco comisión para proyecto de Estructuras de Datos", "Estoy buscando comision para hacer el proyecto final de estructuras de datos", usuario2);
-
-publicaciones.push(publicacion6);
-
-publicaciones.filter(publicacion => publicacion.esDeAutor(usuario2.nombre)).forEach(publicacion => {
-    console.log("--------------------");
-    console.log(`Autor: ${publicacion.autor.nombre}`);
-    console.log();
-});
-
-
-
-const usuario7 = new Usuario("Sofía Ramírez", "sofia.ramirez@gmail.com");
-const usuario8 = new Usuario("Diego Torres", "diego.torres@gmail.com");
-const usuario9 = new Usuario("Valentina Morales", "valentina.morales@gmail.com");
-
-const publicacion7 = new Publicacion("Busco ayuda con física", "Necesito ayuda con los ejercicios de física 2", usuario7);
-const publicacion8 = new Publicacion("Vendo libros de programación", "Tengo libros de programación que ya no necesito sobre JavaScript y Python", usuario8);
-const publicacion9 = new Publicacion("Ofrezco clases particulares de matemáticas", "Ofrezco clases particulares de matemáticas para estudiantes de secundaria y preparatoria", usuario9);
-const publicacion10 = new Publicacion("Busco apuntes de química", "Estoy buscando apuntes de química orgánica para mi clase", usuario7);
-const publicacion11 = new Publicacion("Vendo libros de historia", "Tengo libros de historia que ya no necesito sobre la Segunda Guerra Mundial", usuario8);
-publicaciones.push(publicacion7, publicacion8, publicacion9, publicacion10, publicacion11);
-
-publicaciones.forEach(publicacion => {
-    console.log("--------------------");
-    console.log(publicacion.mostrarResumen());
-});
-
-publicacionesActivas = publicaciones.filter(publicacion => publicacion.estaActiva());
-publicacionesActivas.forEach((publicacion) => {
-    console.log(`${publicacion.titulo}`);
-});
-console.log();
-
-
-const nombreUsuarioBuscado = usuario7.nombre;
-const publicacionEncontrada = publicaciones.find(publicacion => publicacion.esDeAutor(nombreUsuarioBuscado));
-
-if (publicacionEncontrada) {
-    console.log(`Se encontró una publicación de ${nombreUsuarioBuscado}:`);
-    console.log(publicacionEncontrada.mostrarResumen());
-} else {
-    console.log(`No se encontró ninguna publicación de ${nombreUsuarioBuscado}.`);
-}
+publicaciones[2].activa = false;
+publicaciones[2].stock = 0;
 
 const repositorioPublicaciones = new RepositorioPublicaciones();
-publicaciones.forEach(publicacion => {
-    repositorioPublicaciones.agregar(publicacion);
+publicaciones.forEach(publicacion => repositorioPublicaciones.agregar(publicacion));
+
+console.log("Todas las publicaciones:");
+repositorioPublicaciones.listarResumenes().forEach(resumen => console.log(resumen));
+
+const publicacionesActivas = repositorioPublicaciones.filtrarActivas();
+console.log(`\nCantidad de publicaciones activas: ${publicacionesActivas.length}`);
+publicacionesActivas.forEach(publicacion => {
+    console.log(`- ${publicacion.mostrarResumen()}`);
 });
 
+const publicacionesDeUsuario = repositorioPublicaciones.buscarPorUsuario(usuario2.nombre);
+console.log(`\nPublicaciones de ${usuario2.nombre}:`);
+publicacionesDeUsuario.forEach(publicacion => console.log(`- ${publicacion.mostrarResumen()}`));
 
+console.log(`\nPublicaciones de tipo venta: ${repositorioPublicaciones.filtrarPorTipo(PublicacionVenta).length}`);
+console.log(`Publicaciones de tipo servicio: ${repositorioPublicaciones.filtrarPorTipo(PublicacionServicio).length}`);
 
+console.log("\nHerencia de las publicaciones:");
 publicaciones.forEach(publicacion => {
-    const nombreUsuario = publicacion.autor.nombre;
-    const resultados = repositorioPublicaciones.buscarPorUsuario(nombreUsuario);
-
-    console.log(`Publicaciones de ${nombreUsuario}:`);
-    console.log(resultados);
+    console.log(`${publicacion.constructor.name} hereda de Publicacion: ${publicacion instanceof Publicacion}`);
 });
