@@ -24,4 +24,9 @@ export default class Publicacion {
     esDeAutor(nombre) {
         return this.autor.nombre === nombre;
     }
+
+    diasPublicada() {
+        const ms = new Date() - this.fechaPublicacion;
+        return Math.floor(ms / (1000 * 60 * 60 * 24));
+    }
 }

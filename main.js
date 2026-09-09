@@ -67,3 +67,33 @@ publicaciones.forEach(publicacion => {
     console.log(`${publicacion.constructor.name} hereda de Publicacion: ${publicacion instanceof Publicacion}`);
 });
 
+function publicarConDemora(publicacion, callback) {
+    setTimeout(() => {
+        repositorioPublicaciones.agregar(publicacion);
+        callback(publicacion);
+    }, 1500);
+}
+
+const nuevaPublicacion = new Publicacion(
+    "Busco apuntes de cálculo",
+    "Apuntes para la clase de cálculo diferencial",
+    usuario1
+);
+
+publicarConDemora(nuevaPublicacion, (publicacion) => {
+    console.log(`Publicación agregada con demora: ${publicacion.titulo}`);
+});
+
+console.log("Esto deberia aparecer antes de la publicación con demora...");
+
+
+function demora(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function publicarConDemoraAsync(publicacion) {
+    await demora(1500);
+    repositorioPublicaciones.agregar(publicacion);
+    console.log(`Publicación agregada con demora (async): ${publicacion.titulo}`);
+}
+
