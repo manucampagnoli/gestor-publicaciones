@@ -1,3 +1,5 @@
+import Publicacion from "./Publicacion.js";
+
 export default class PublicacionVenta extends Publicacion {
     precio;
     stock = 1;
