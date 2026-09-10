@@ -1,6 +1,6 @@
 import { EventEmitter } from "node:events";
 
-export default class RepositorioPublicaciones extends EventEmitter{
+export class RepositorioPublicaciones extends EventEmitter{
     publicaciones;
     
     constructor() {
@@ -8,10 +8,7 @@ export default class RepositorioPublicaciones extends EventEmitter{
         this.publicaciones = [];
     }
 
-    agregar(publicacion, reglas) {
-        if (!validarPublicacion(publicacion, reglas)) {
-            throw new Error('La publicación no cumple las reglas de validación');
-        }
+    agregar(publicacion) {
         this.publicaciones.push(publicacion);
         this.emit("publicacionAgregada", publicacion);
     }
@@ -40,21 +37,4 @@ export default class RepositorioPublicaciones extends EventEmitter{
         return this.publicaciones.filter(publicacion => publicacion instanceof claseConstructor);
     }
     
-}
-
-function validarPublicacion(publicacion, reglas) {
-    for (const propiedad in reglas) {
-        const validador = reglas[propiedad];
-
-        if (typeof validador === 'function') {
-            if (!validador(publicacion[propiedad], publicacion)) {
-                return false;
-            }
-        } else {
-            if (publicacion[propiedad] !== validador) {
-                return false;
-            }
-        }
-    }
-    return true;
 }

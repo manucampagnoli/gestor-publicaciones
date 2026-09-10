@@ -1,4 +1,4 @@
-export default class Usuario {
+export class Usuario {
     nombre;
     email;
     fechaRegistro;

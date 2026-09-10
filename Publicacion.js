@@ -1,4 +1,4 @@
-export default class Publicacion {
+export class Publicacion {
     titulo;
     descripcion;
     autor;

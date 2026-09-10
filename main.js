@@ -1,99 +1,123 @@
-import Publicacion from "./Publicacion.js";
-import PublicacionServicio from "./PublicacionServicio.js";
-import PublicacionVenta from "./PublicacionVenta.js";
-import Usuario from "./Usuario.js";
-import RepositorioPublicaciones from "./RepositorioPublicaciones.js";
+import { Publicacion } from "./Publicacion.js";
+import { Usuario } from "./Usuario.js";
+import { PublicacionVenta } from "./PublicacionVenta.js";
+import { PublicacionServicio } from "./PublicacionServicio.js";
+import { RepositorioPublicaciones } from "./RepositorioPublicaciones.js";
+import { validarPublicacion } from "./validaciones.js";
+import { publicarConDemora, publicarConDemoraAsync } from "./asincronia.js";
+
+console.log("\n=== Usuarios y Publicaciones ===\n");
 
 
-const usuario1 = new Usuario("Juan Pérez", "juan.perez@gmail.com");
-const usuario2 = new Usuario("María López", "maria.lopez@gmail.com");
-const usuario3 = new Usuario("Carlos García", "carlos.garcia@gmail.com");
-const usuario4 = new Usuario("Ana Torres", "ana.torres@gmail.com");
+const ana = new Usuario("Ana", "ana@mail.com");
+const beto = new Usuario("Beto", "beto@mail.com");
+const caro = new Usuario("Caro", "caro@mail.com");
 
-const publicaciones = [
-    new Publicacion(
-        "Busco apuntes de álgebra",
-        "Apuntes para la clase de álgebra analítica",
-        usuario1
-    ),
-    new PublicacionServicio(
-        "Clases particulares de programación",
-        "Ayuda con ejercicios de POO",
-        usuario2,
-        "Virtual",
-        "2 horas",
-        usuario3
-    ),
-    new PublicacionVenta(
-        "Vendo libros de patrones de diseño",
-        "Libros de texto en buen estado",
-        usuario4,
-        25000
-    )
-];
 
-publicaciones[2].activa = false;
-publicaciones[2].stock = 0;
+ana.agregarContacto(beto);
+console.log("Contactos de Ana:", ana.contactos.map((c) => c.nombre));
 
-const repositorioPublicaciones = new RepositorioPublicaciones();
-repositorioPublicaciones.on("publicacionAgregada", (publicacion) => {
-    console.log(`Nueva publicación agregada: ${publicacion.titulo}`);
+
+const p1 = new PublicacionVenta("Apuntes de Física II", "Completos, con resueltos", ana, 3500);
+const p2 = new PublicacionVenta("Calculadora científica", "Usada, funciona perfecto", beto, 8000);
+const p3 = new PublicacionServicio("Clases de inglés", "Nivel intermedio", caro, "virtual", 1, ana);
+const p4 = new PublicacionServicio("Ayuda con Álgebra", "Repaso para el final", ana, "presencial", 2, beto);
+const p5 = new PublicacionVenta("Apunte viejo de Química", "Ediciones anteriores", beto, 500);
+p5.activa = false;
+
+const publicaciones = [p1, p2, p3, p4, p5];
+
+
+publicaciones.forEach((p) => {
+  console.log(`${p.mostrarResumen()} | activa: ${p.estaActiva()}`);
 });
 
-repositorioPublicaciones.on("publicacionAgregada", (publicacion) => {
-    console.log(`Publicación agregada por: ${publicacion.autor.nombre}`);
-});
 
-publicaciones.forEach(publicacion => repositorioPublicaciones.agregar(publicacion));
+const activas = publicaciones.filter((p) => p.estaActiva());
+console.log("\nTítulos activos:", activas.map((p) => p.titulo));
+console.log("Cantidad de activas (for clásico):", (() => {
+  let contador = 0;
+  for (const p of publicaciones) if (p.estaActiva()) contador++;
+  return contador;
+})());
 
-console.log("Todas las publicaciones:");
-repositorioPublicaciones.listarResumenes().forEach(resumen => console.log(resumen));
 
-const publicacionesActivas = repositorioPublicaciones.filtrarActivas();
-console.log(`\nCantidad de publicaciones activas: ${publicacionesActivas.length}`);
-publicacionesActivas.forEach(publicacion => {
-    console.log(`- ${publicacion.mostrarResumen()}`);
-});
+const primeraDeAna = publicaciones.find((p) => p.autor.nombre === "Ana");
+console.log("\nPrimera publicación de Ana:", primeraDeAna.mostrarResumen());
 
-const publicacionesDeUsuario = repositorioPublicaciones.buscarPorUsuario(usuario2.nombre);
-console.log(`\nPublicaciones de ${usuario2.nombre}:`);
-publicacionesDeUsuario.forEach(publicacion => console.log(`- ${publicacion.mostrarResumen()}`));
 
-console.log(`\nPublicaciones de tipo venta: ${repositorioPublicaciones.filtrarPorTipo(PublicacionVenta).length}`);
-console.log(`Publicaciones de tipo servicio: ${repositorioPublicaciones.filtrarPorTipo(PublicacionServicio).length}`);
+ana.email = "ana.nueva@mail.com";
+console.log("\n¿Cambió el email en todas las publicaciones de Ana?");
+publicaciones
+  .filter((p) => p.autor === ana)
+  .forEach((p) => console.log(" ", p.autor.email));
 
-console.log("\nHerencia de las publicaciones:");
-publicaciones.forEach(publicacion => {
-    console.log(`${publicacion.constructor.name} hereda de Publicacion: ${publicacion instanceof Publicacion}`);
-});
-
-function publicarConDemora(publicacion, callback) {
-    setTimeout(() => {
-        repositorioPublicaciones.agregar(publicacion);
-        callback(publicacion);
-    }, 1500);
-}
-
-const nuevaPublicacion = new Publicacion(
-    "Busco apuntes de cálculo",
-    "Apuntes para la clase de cálculo diferencial",
-    usuario1
+console.log(
+  "\nPublicaciones de Beto (esDeAutor):",
+  publicaciones.filter((p) => p.esDeAutor("Beto")).map((p) => p.titulo)
 );
 
-publicarConDemora(nuevaPublicacion, (publicacion) => {
-    console.log(`Publicación agregada con demora: ${publicacion.titulo}`);
+console.log("\n=== Herencia y polimorfismo ===\n");
+
+publicaciones.forEach((p) =>
+  console.log(`${p.titulo} → instanceof Publicacion: ${p instanceof Publicacion}`)
+);
+
+
+const reglas = { minTitulo: 5, descripcionObligatoria: true };
+
+const repositorio = new RepositorioPublicaciones();
+
+
+repositorio.on("publicacionAgregada", (pub) => {
+  console.log(`[listener 1 - log] Nueva publicación: "${pub.titulo}"`);
+});
+repositorio.on("publicacionAgregada", (pub) => {
+  console.log(`[listener 2 - notificación] Avisando a ${pub.autor.nombre} que su publicación está online`);
 });
 
-console.log("Esto deberia aparecer antes de la publicación con demora...");
+
+publicaciones.forEach((p) => {
+  if (validarPublicacion(p, reglas)) {
+    repositorio.agregar(p);
+  } else {
+    console.log(`"${p.titulo}" no pasó la validación y no se agregó.`);
+  }
+});
+
+console.log("\nBúsqueda por usuario (Ana):", repositorio.buscarPorUsuario("Ana").map((p) => p.titulo));
+console.log("Activas en el repositorio:", repositorio.filtrarActivas().map((p) => p.titulo));
+console.log("Cantidad total en repositorio:", repositorio.cantidadTotal());
 
 
-function demora(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+console.log("\nlistarResumenes():");
+repositorio.listarResumenes().forEach((r) => console.log(" -", r));
+
+console.log(
+  "\nfiltrarPorTipo(PublicacionVenta):",
+  repositorio.filtrarPorTipo(PublicacionVenta).map((p) => p.titulo)
+);
+console.log(
+  "filtrarPorTipo(PublicacionServicio):",
+  repositorio.filtrarPorTipo(PublicacionServicio).map((p) => p.titulo)
+);
+
+console.log("\n=== Asincronía: callback vs async/await ===\n");
+
+console.log("Antes de publicarConDemora...");
+publicarConDemora(p1, (pub) => {
+  console.log(`[callback] "${pub.titulo}" publicada con demora.`);
+});
+console.log("...esto se imprime ANTES del callback: setTimeout no bloquea.\n");
+
+async function demoAsync() {
+  console.log("Antes de publicarConDemoraAsync (await)...");
+  const pub = await publicarConDemoraAsync(p2);
+  console.log(`[async/await] "${pub.titulo}" publicada con demora.`);
 }
+demoAsync();
 
-async function publicarConDemoraAsync(publicacion) {
-    await demora(1500);
-    repositorioPublicaciones.agregar(publicacion);
-    console.log(`Publicación agregada con demora (async): ${publicacion.titulo}`);
-}
+console.log("\n=== Serializar a JSON ===\n");
+const publicacionesJSON = JSON.stringify(publicaciones, null, 2);
+console.log(publicacionesJSON);
 

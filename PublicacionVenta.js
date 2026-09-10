@@ -1,6 +1,6 @@
-import Publicacion from "./Publicacion.js";
+import { Publicacion } from "./Publicacion.js";
 
-export default class PublicacionVenta extends Publicacion {
+export class PublicacionVenta extends Publicacion {
     precio;
     stock = 1;
 
@@ -10,7 +10,6 @@ export default class PublicacionVenta extends Publicacion {
     }
 
     mostrarResumen() {
-        return `${super.mostrarResumen()}, Precio: $${this.precio}, Stock: ${this.stock}`;
+        return `${super.mostrarResumen()} — $${this.precio} (stock: ${this.stock})`;
     }
-
 }
