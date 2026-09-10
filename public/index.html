@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/styles.css">
+    
+</head>
+
+<body>
+    <form id="form-publicacion">
+        <input id="titulo" placeholder="Título" required>
+        <textarea id="descripcion" placeholder="Descripción"></textarea>
+        <input id="autor" placeholder="Nombre del autor" required>
+        <input id="email" type="email" placeholder="Email" required>
+        <small id="ayuda-email"></small> 
+        <select id="tipo">
+            <option value="venta">Venta</option>
+            <option value="servicio">Servicio</option>
+        </select>
+        <div id="campos-especificos"></div>
+        <button>Publicar</button>
+    </form>
+    <output id="vista-previa"></output>
+    <section id="lista-publicaciones"></section>
+</body>
+
+<script src="js/main.js" type="module"></script>
+</html>
