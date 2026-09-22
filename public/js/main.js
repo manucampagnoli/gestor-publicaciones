@@ -1,6 +1,7 @@
 import { Usuario } from "./Usuario.js";
 import { PublicacionServicio } from "./PublicacionServicio.js";
 import { PublicacionVenta } from "./PublicacionVenta.js";
+import { RepositorioPublicaciones } from "./RepositorioPublicaciones.js";
 
 const formulario = document.querySelector("#form-publicacion");
 const titulo = document.querySelector("#titulo");
@@ -11,8 +12,8 @@ const ayudaEmail = document.querySelector("#ayuda-email");
 const tipo = document.querySelector("#tipo");
 const camposEspecificos = document.querySelector("#campos-especificos");
 const vistaPrevia = document.querySelector("#vista-previa");
-const publicaciones = [];
-
+const repositorio = new RepositorioPublicaciones();
+const lista = document.querySelector("#lista-publicaciones");
 
 
  
@@ -89,8 +90,8 @@ function crearPublicacionDesdeFormulario() {
 function manejarEnvio(evento) {
     evento.preventDefault();
     const publicacion = crearPublicacionDesdeFormulario();
-    publicaciones.push(publicacion);
-    agregarTarjeta(publicacion);
+    repositorio.agregar(publicacion);
+    renderizarPublicaciones();
     formulario.reset();
     actualizarCamposEspecificos();
     actualizarVistaPrevia();
@@ -98,25 +99,47 @@ function manejarEnvio(evento) {
 formulario.addEventListener("submit", manejarEnvio);
 
 function agregarTarjeta(publicacion) {
-    const listaPublicaciones = document.querySelector("#lista-publicaciones");
     const tarjeta = document.createElement("article");
+    tarjeta.dataset.id = publicacion.id;
+  
     const resumen = document.createElement("p");
     resumen.textContent = publicacion.mostrarResumen();
 
     const estado = document.createElement("span");
     estado.textContent = publicacion.estaActiva() ? "Activa" : "Inactiva";
 
-    const boton = document.createElement("button");
-    boton.textContent = "Dar de baja";
+    const botonBaja = document.createElement("button");
+    botonBaja.textContent = "Dar de baja";
+    botonBaja.dataset.accion = "baja";
 
-    function manejarBaja(evento) {
-        console.log(evento.type, evento.target);
-        publicacion.darDeBaja();
-        estado.textContent = "Inactiva";
-        boton.disabled = true;
-    }
-    boton.addEventListener("click", manejarBaja);
+    const botonDestacar = document.createElement("button");
+    botonDestacar.textContent = "Destacar";
+    botonDestacar.dataset.accion = "destacar";
 
-    tarjeta.append(resumen, estado, boton);
-    listaPublicaciones.appendChild(tarjeta);
+    tarjeta.append(resumen, estado, botonBaja, botonDestacar);
+    lista.appendChild(tarjeta);
 }
+
+function renderizarPublicaciones() {
+    lista.innerHTML = "";
+    repositorio.publicaciones.forEach(agregarTarjeta);
+}
+
+function manejarAccion(evento) {
+    const boton = evento.target.closest("button[data-accion]");
+    if (!boton || !lista.contains(boton)) return;
+    const tarjeta = boton.closest("[data-id]");
+    const id = Number(tarjeta.dataset.id);
+    
+    const publicacion = repositorio.buscarPorId(id);
+    if (!publicacion) return;
+
+    if (boton.dataset.accion === "baja") publicacion.darDeBaja();
+    if (boton.dataset.accion === "destacar") publicacion.destacar();
+
+    renderizarPublicaciones();
+    
+}
+
+lista.addEventListener("click", manejarAccion);
+

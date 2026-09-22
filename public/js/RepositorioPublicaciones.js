@@ -1,16 +1,13 @@
-import { EventEmitter } from "node:events";
 
-export class RepositorioPublicaciones extends EventEmitter{
+export class RepositorioPublicaciones{
     publicaciones;
     
     constructor() {
-        super();
         this.publicaciones = [];
     }
 
     agregar(publicacion) {
         this.publicaciones.push(publicacion);
-        this.emit("publicacionAgregada", publicacion);
     }
 
     buscarPorUsuario(nombre) {
@@ -37,4 +34,7 @@ export class RepositorioPublicaciones extends EventEmitter{
         return this.publicaciones.filter(publicacion => publicacion instanceof claseConstructor);
     }
     
+    buscarPorId(id) {
+        return this.publicaciones.find(publicacion => publicacion.id === id);
+    }
 }
