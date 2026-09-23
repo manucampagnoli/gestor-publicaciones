@@ -7,7 +7,7 @@ export class Publicacion {
     autor;
     fechaPublicacion;
     activa;
-    destacadol;
+    destacado;
 
     constructor (titulo, descripcion, autor) {
         this.id = ++Publicacion.contador;
